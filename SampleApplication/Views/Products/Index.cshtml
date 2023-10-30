@@ -1,0 +1,63 @@
+﻿@model List<SampleApplication.Models.ProductModel>
+@{
+	ViewBag.Title = "Index";
+	int index = 0;
+}
+
+<h2>Index</h2>
+
+<h4>Welcome to our Products Index page.</h4>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="d-flex justify-content-between align-items-center mb-3">
+	<h4>Products List</h4>
+	@Html.ActionLink("Add Product", "AddProduct", null, new { @class = "btn btn-success btn-sm" })
+</div>
+
+<table class="table table-bordered">
+	<tr>
+		<th>
+			S/N
+		</th>
+		<th>
+			Name
+		</th>
+		<th>
+			Description
+		</th>
+		<th>
+			Quantity
+		</th>
+		<th>
+			Color
+		</th>
+	</tr>
+	@foreach (var prod in Model)
+	{
+		<tr>
+			@{
+				index++;
+			}
+			<td>
+				@index
+			</td>
+			<td>
+				@prod.Name
+			</td>
+			<td>
+				@prod.Description
+			</td>
+			<td>
+				@prod.Quantity
+			</td>
+			<td>
+				@prod.Color
+			</td>
+		</tr>
+	}
+</table>
