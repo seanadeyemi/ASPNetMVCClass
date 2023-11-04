@@ -36,6 +36,11 @@
 		<th>
 			Color
 		</th>
+		<th>
+			Price
+		</th>
+		<th></th>
+		<th></th>
 	</tr>
 	@foreach (var prod in Model)
 	{
@@ -58,6 +63,51 @@
 			<td>
 				@prod.Color
 			</td>
+			<td>
+				&#x20A6; @prod.UnitPrice.ToString("N")
+			</td>
+			<td>
+				<a href="/Products/Edit/@prod.Id">Edit</a>
+			</td>
+			<td>
+				@using(Html.BeginForm("Delete","Products", new {id = prod.Id}, FormMethod.Post, new {id = "deleteForm"}))
+				{
+					@Html.AntiForgeryToken()
+					@Html.HttpMethodOverride(HttpVerbs.Delete)
+					@*@Html.Hidden("Id", prod.Id)*@
+					
+					<input type="submit" value="Delete" onclick="return confirmDelete();" class="btn btn-danger btn-xs" />
+				}
+
+				@*@Html.ActionLink("Delete","Delete", new {id = prod.Id}, new {onclick = "return confirm('Are you sure you really want to delete this product?');"})*@
+			</td>
 		</tr>
 	}
 </table>
+
+
+
+<script>
+	function confirmDelete()
+	{
+		if (confirm('Are you sure you really want to delete this product?'))
+		{
+			//$.ajax({
+			//	type: "POST",
+			//	url: $("#deleteForm").attr("action"),
+			//	data: $("#deleteForm").serialize(),
+			//	success: function (response) {
+
+			//	}
+
+			//	error: function (xhr, status, error) {
+
+			//	}
+
+
+			//});
+
+		}
+		return false;
+	}
+</script>

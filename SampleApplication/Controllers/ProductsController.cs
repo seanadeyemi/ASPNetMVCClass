@@ -24,7 +24,8 @@ namespace SampleApplication.Controllers
                     Color = product.Color,
                     Description = product.Description,
                     Quantity = product.Quantity,
-                    UnitPrice = product.UnitPrice
+                    UnitPrice = product.UnitPrice,
+                    Id = product.Id
                 });
             }
 
@@ -40,7 +41,7 @@ namespace SampleApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddProduct(ProductModel productModel)
+        public ActionResult AddProduct([Bind(Exclude = "Id")] ProductModel productModel)
         {
             if (!ModelState.IsValid)
             {
@@ -73,6 +74,84 @@ namespace SampleApplication.Controllers
 
         }
 
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            var context = new SampleDbContext();
+            var product = context.Products.Find(id);
+
+            if (product == null)
+            {
+                return HttpNotFound();
+            }
+
+            var productModel = new ProductModel
+            {
+                Name = product.Name,
+                Id = product.Id,
+                Quantity = product.Quantity,
+                Color = product.Color,
+                Description = product.Description,
+                UnitPrice = product.UnitPrice
+
+            };
+
+            return View(productModel);
+
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(ProductModel productModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(productModel);
+
+            }
+
+            var context = new SampleDbContext();
+            var productEntity = context.Products.Find(productModel.Id);
+
+            if (productEntity == null)
+            {
+                return HttpNotFound();
+            }
+
+            //Lets update it
+            productEntity.Name = productModel.Name;
+            productEntity.Quantity = productModel.Quantity;
+            productEntity.Color = productModel.Color;
+            productEntity.Description = productModel.Description;
+            productEntity.UnitPrice = productModel.UnitPrice;
+
+            context.SaveChanges();
+
+            return RedirectToAction("Index");
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id)
+        {
+            var context = new SampleDbContext();
+            var productEntity = context.Products.Find(id);
+
+
+            if (productEntity == null)
+            {
+                return HttpNotFound();
+            }
+
+
+            //Remove the product entity from the database
+            context.Products.Remove(productEntity);
+            context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
 
     }
 }
