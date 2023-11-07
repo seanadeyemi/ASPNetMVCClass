@@ -1,4 +1,4 @@
-﻿@model List<SampleApplication.Models.ProductModel>
+﻿@model List<SampleApplication.Models.CategoryModel>
 @{
 	ViewBag.Title = "Index";
 	int index = 0;
@@ -6,7 +6,7 @@
 
 <h2>Index</h2>
 
-<h4>Welcome to our Products Index page.</h4>
+<h4>Welcome to our Category Index page.</h4>
 <br />
 <br />
 <br />
@@ -15,8 +15,8 @@
 <br />
 <br />
 <div class="d-flex justify-content-between align-items-center mb-3">
-	<h4>Products List</h4>
-	@Html.ActionLink("Add Product", "AddProduct", null, new { @class = "btn btn-success btn-sm" })
+	<h4>Category List</h4>
+	@Html.ActionLink("Add Category", "AddCategory", null, new { @class = "btn btn-success btn-sm" })
 </div>
 
 <table class="table table-bordered">
@@ -30,15 +30,7 @@
 		<th>
 			Description
 		</th>
-		<th>
-			Quantity
-		</th>
-		<th>
-			Color
-		</th>
-		<th>
-			Price
-		</th>
+		
 		<th></th>
 		<th></th>
 	</tr>
@@ -52,30 +44,22 @@
 				@index
 			</td>
 			<td>
-				<a href="/Products/ProductDetails/@prod.Id">@prod.Name</a>
+				@prod.Name
 			</td>
 			<td>
 				@prod.Description
 			</td>
+		
 			<td>
-				@prod.Quantity
+				<a href="/Category/Edit/@prod.Id">Edit</a>
 			</td>
 			<td>
-				@prod.Color
-			</td>
-			<td>
-				&#x20A6; @prod.UnitPrice.ToString("N")
-			</td>
-			<td>
-				<a href="/Products/Edit/@prod.Id">Edit</a>
-			</td>
-			<td>
-				@using(Html.BeginForm("Delete","Products", new {id = prod.Id}, FormMethod.Post, new {id = "deleteForm"}))
+				@using (Html.BeginForm("Delete", "Category", new { id = prod.Id }, FormMethod.Post, new { id = "deleteForm" }))
 				{
 					@Html.AntiForgeryToken()
 					@Html.HttpMethodOverride(HttpVerbs.Delete)
 					@*@Html.Hidden("Id", prod.Id)*@
-					
+
 					<input type="submit" value="Delete" onclick="return confirmDelete();" class="btn btn-danger btn-xs" />
 				}
 
