@@ -127,7 +127,10 @@ namespace SampleApplication.Controllers
 
 
             //redirect or navigate to the index page
-            return RedirectToAction("Index");
+            //  return RedirectToAction("Index");
+
+            //we are using ajax now so we have to return the url we want to redirect to instead
+            return Json(Url.Action("Index", "Products"));
 
         }
 
@@ -144,11 +147,7 @@ namespace SampleApplication.Controllers
             }
 
 
-
-
             var categories = context.Categories.ToList(); // Retrieve the list of categories from the database
-
-
 
 
             var productModel = new ProductModel
@@ -166,6 +165,10 @@ namespace SampleApplication.Controllers
                     Text = c.Name
                 })
             };
+
+            var imagePaths = context.ProductImages.Where(pi => pi.ProductId == id).Select(pi => pi.ImagePath).ToList();
+
+            productModel.ImagePaths = imagePaths;
 
             return View(productModel);
 
@@ -210,8 +213,58 @@ namespace SampleApplication.Controllers
 
             context.SaveChanges();
 
-            return RedirectToAction("Index");
 
+            var productImageEntities = context.ProductImages.Where(pi => pi.ProductId == productModel.Id).ToList();
+
+
+            //Remove the product image entities from the database
+            context.ProductImages.RemoveRange(productImageEntities);
+            context.SaveChanges();
+
+            // Create a list to store the file paths associated with the product
+            List<string> imagePaths = new List<string>();
+
+            if (productModel.Images != null && productModel.Images.Count > 0)
+            {
+                foreach (var imageFile in productModel.Images)
+                {
+                    if (imageFile != null && imageFile.ContentLength > 0)
+                    {
+                        // Save the image to a location of your choice, e.g., a folder on the server
+                        // You can generate a unique file name to avoid overwriting existing images
+                        var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                        var filePath = Path.Combine(Server.MapPath("~/Images"), fileName);
+                        imageFile.SaveAs(filePath);
+
+                        // Store the file path or other information in your database for reference
+                        // You can associate the file with the product being added
+                        // Store the file path in the list
+                        imagePaths.Add("Images/" + fileName);
+                    }
+                }
+            }
+
+
+
+            // Associate the uploaded image file paths with the product
+            if (imagePaths.Count > 0)
+            {
+                foreach (var imagePath in imagePaths)
+                {
+                    var imageEntity = new ProductImage
+                    {
+                        ProductId = productEntity.Id,
+                        ImagePath = imagePath
+                    };
+
+                    context.ProductImages.Add(imageEntity);
+                }
+
+                context.SaveChanges();
+            }
+
+            //return RedirectToAction("Index");
+            return Json(Url.Action("Index", "Products"));
         }
 
         [HttpPost]
@@ -232,7 +285,9 @@ namespace SampleApplication.Controllers
             context.Products.Remove(productEntity);
             context.SaveChanges();
 
-            return RedirectToAction("Index");
+            // return RedirectToAction("Index");
+            return Json(Url.Action("Index", "Products"));
+
         }
 
 
