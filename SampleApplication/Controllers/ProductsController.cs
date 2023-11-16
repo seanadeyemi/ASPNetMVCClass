@@ -1,4 +1,5 @@
-﻿using SampleApplication.Data;
+﻿using PagedList;
+using SampleApplication.Data;
 using SampleApplication.Entities;
 using SampleApplication.Models;
 using System;
@@ -12,10 +13,16 @@ namespace SampleApplication.Controllers
     public class ProductsController : Controller
     {
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Index(int? page)
         {
+
+            var pageSize = 5;
             var context = new SampleDbContext();
-            var productsList = context.Products.ToList();
+            var productsList = context.Products.ToList().ToPagedList(page ?? 1, pageSize);
+
+            ViewBag.Page = page ?? 1;
+            ViewBag.PageSize = pageSize;
+
 
             var productsModelList = new List<ProductModel>();
             foreach (var product in productsList)
@@ -31,8 +38,10 @@ namespace SampleApplication.Controllers
                 });
             }
 
+            var pagedList = new PagedList<ProductModel>(productsModelList, page == null ? 1 : page.Value, productsModelList.Count());
 
-            return View(productsModelList);
+
+            return View(pagedList);
         }
 
         [HttpGet]

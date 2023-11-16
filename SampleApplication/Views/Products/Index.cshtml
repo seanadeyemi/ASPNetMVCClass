@@ -1,7 +1,14 @@
-﻿@model List<SampleApplication.Models.ProductModel>
+﻿@using PagedList
+@using PagedList.Mvc
+
+
+@model IPagedList<SampleApplication.Models.ProductModel>
 @{
-	ViewBag.Title = "Index";
+
 	int index = 0;
+	var page = ViewBag.Page ?? 1;
+	var pageSize = ViewBag.PageSize ?? Model.Count();
+
 }
 
 <h2>Index</h2>
@@ -84,7 +91,9 @@
 		</tr>
 	}
 </table>
-
+<div>
+	@Html.PagedListPager(Model, p => Url.Action("Index", new {p}), new PagedListRenderOptions {LiElementClasses = new List<string> {"pagerli" }, DisplayPageCountAndCurrentLocation =true, DisplayItemSliceAndTotal = true })
+</div>
 
 
 <script>
