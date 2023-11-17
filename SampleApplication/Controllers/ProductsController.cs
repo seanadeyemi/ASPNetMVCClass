@@ -12,37 +12,50 @@ namespace SampleApplication.Controllers
 {
     public class ProductsController : Controller
     {
+
         [HttpGet]
         public ActionResult Index(int? page)
         {
-
             var pageSize = 5;
             var context = new SampleDbContext();
-            var productsList = context.Products.ToList().ToPagedList(page ?? 1, pageSize);
 
-            ViewBag.Page = page ?? 1;
-            ViewBag.PageSize = pageSize;
+            // Get the total count of items
+            var totalCount = context.Products.Count();
 
+            // Calculate the total number of pages
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            var productsModelList = new List<ProductModel>();
-            foreach (var product in productsList)
+            // Ensure the page parameter is within valid bounds
+            page = page.HasValue ? Math.Max(1, Math.Min(page.Value, totalPages)) : 1;
+
+            // Retrieve the records for the current page
+            var productsList = context.Products
+                .OrderBy(p => p.Id) // Adjust the ordering as needed
+                .Skip((page.Value - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Map the products to ProductModel
+            var productsModelList = productsList.Select(product => new ProductModel
             {
-                productsModelList.Add(new ProductModel
-                {
-                    Name = product.Name,
-                    Color = product.Color,
-                    Description = product.Description,
-                    Quantity = product.Quantity,
-                    UnitPrice = product.UnitPrice,
-                    Id = product.Id
-                });
-            }
+                Name = product.Name,
+                Color = product.Color,
+                Description = product.Description,
+                Quantity = product.Quantity,
+                UnitPrice = product.UnitPrice,
+                Id = product.Id
+            }).ToList();
 
-            var pagedList = new PagedList<ProductModel>(productsModelList, page == null ? 1 : page.Value, productsModelList.Count());
+            // Create a PagedList with the mapped products
+            var pagedList = new StaticPagedList<ProductModel>(productsModelList, page.Value, pageSize, totalCount);
 
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalCount = totalCount;
 
             return View(pagedList);
         }
+
 
         [HttpGet]
         public ActionResult AddProduct()

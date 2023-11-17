@@ -43,3 +43,75 @@ textarea {
 .pagerli {
     color: #333333;
 }
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+}
+
+/*.pagination .page-link {
+    border-radius: 20px;*/ /* Adjust as needed for rounded controls */
+    /*margin: 0 5px;*/ /* Adjust spacing between page links */
+    /*color: #007bff;*/ /* Adjust link color */
+    /*background-color: #ffffff;*/ /* Adjust background color */
+    /*border: 1px solid #007bff;*/ /* Adjust border color */
+    /*padding: 5px 10px;*/ /* Adjust padding */
+    /*text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+    .pagination .page-link:hover {
+        background-color: #007bff;*/ /* Adjust hover background color */
+        /*color: #ffffff;*/ /* Adjust hover text color */
+    /*}
+
+.pagination .current a {
+    background-color: #007bff;*/ /* Adjust current page background color */
+    /*color: #ffffff;*/ /* Adjust current page text color */
+    /*border: 1px solid #007bff;*/ /* Adjust current page border color */
+/*}
+
+.pagination .disabled {
+    color: #808080;*/ /* Adjust disabled text color */
+    /*pointer-events: none;
+    cursor: not-allowed;
+}*/
+
+
+/* Custom styling for page links */
+.pagination .page-item {
+    display: inline-block;
+    margin: 0 5px; /* Adjust spacing between page links */
+}
+
+.pagination .page-link {
+    border-radius: 50%; /* Make it a circle */
+    width: 30px; /* Adjust width to control the size of the circle */
+    height: 30px; /* Adjust height to control the size of the circle */
+    line-height: 30px; /* Center text vertically */
+    text-align: center; /* Center text horizontally */
+    color: #007bff; /* Adjust link color */
+    background-color: #ffffff; /* Adjust background color */
+    border: 1px solid #007bff; /* Adjust border color */
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+    .pagination .page-link:hover {
+        background-color: #007bff; /* Adjust hover background color */
+        color: #ffffff; /* Adjust hover text color */
+    }
+
+/* Custom styling for the current page */
+.pagination .current .page-link {
+    background-color: #ff9900; /* Adjust current page background color */
+    color: #ffffff; /* Adjust current page text color */
+    border: 1px solid #ff9900; /* Adjust current page border color */
+}

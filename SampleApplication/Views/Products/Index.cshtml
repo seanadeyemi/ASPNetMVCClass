@@ -4,12 +4,9 @@
 
 @model IPagedList<SampleApplication.Models.ProductModel>
 @{
-
-	int index = 0;
-	var page = ViewBag.Page ?? 1;
-	var pageSize = ViewBag.PageSize ?? Model.Count();
-
+	int index = (ViewBag.Page - 1) * ViewBag.PageSize;
 }
+
 
 <h2>Index</h2>
 
@@ -77,12 +74,12 @@
 				<a href="/Products/Edit/@prod.Id">Edit</a>
 			</td>
 			<td>
-				@using(Html.BeginForm("Delete","Products", FormMethod.Post, new {id = "deleteForm"}))
+				@using (Html.BeginForm("Delete", "Products", FormMethod.Post, new { id = "deleteForm" }))
 				{
 					@Html.AntiForgeryToken()
 					@*@Html.HttpMethodOverride(HttpVerbs.Delete)*@
 					@Html.Hidden("Id", prod.Id)
-					
+
 					<input type="submit" value="Delete" onclick="return confirmDelete();" class="btn btn-danger btn-xs" />
 				}
 
@@ -91,16 +88,37 @@
 		</tr>
 	}
 </table>
-<div>
-	@Html.PagedListPager(Model, p => Url.Action("Index", new {p}), new PagedListRenderOptions {LiElementClasses = new List<string> {"pagerli" }, DisplayPageCountAndCurrentLocation =true, DisplayItemSliceAndTotal = true })
+<div class="pagination-container">
+	<div class="pagination-controls">
+		@Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
+   {
+	   DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+	   DisplayLinkToLastPage = PagedListDisplayMode.Always,
+	   DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+	   DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded,
+	   MaximumPageNumbersToDisplay = 5, // Adjust as needed
+	   DisplayPageCountAndCurrentLocation = true,
+	   DisplayItemSliceAndTotal = false,
+	   LinkToFirstPageFormat = "<<",
+	   LinkToLastPageFormat = ">>",
+	   LinkToNextPageFormat = "→",
+	   LinkToPreviousPageFormat = "←",
+	   UlElementClasses = new[] { "pagination" },
+	   LiElementClasses = new[] { "page-item" },
+	   //PageClasses = new[] { "page-link" },
+	   //CurrentElementWrapTag = new[] { "strong" },
+	   //CurrentElementWrapTagClasses = new[] { "current" },
+	  // ItemSliceAndTotalFormat = "Displaying items {0} through {1} of {2}.",
+	   ContainerDivClasses = new[] { "pagination-container" }
+		})
+	</div>
 </div>
 
 
+
 <script>
-	function confirmDelete()
-	{
-		if (confirm('Are you sure you really want to delete this product?'))
-		{
+	function confirmDelete() {
+		if (confirm('Are you sure you really want to delete this product?')) {
 			$.ajax({
 				type: "POST",
 				url: $("#deleteForm").attr("action"),
